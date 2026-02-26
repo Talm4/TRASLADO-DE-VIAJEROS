@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Traslado VMR – TALMA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --verde:        #78bb1e;
+      --verde-osc:    #5c9016;
+      --verde-claro:  #92d122;
+      --verde-bg:     #f2fadf;
+      --verde-mid:    #dff0b0;
+
+      --gris-900:  #1a2130;
+      --gris-700:  #374151;
+      --gris-500:  #6b7280;
+      --gris-200:  #e5e7eb;
+      --gris-100:  #f3f4f6;
+      --blanco:    #ffffff;
+      --oscuro:    #1e2d0e;
+
+      --ambar:     #f59e0b;
+      --ambar-bg:  #fffbeb;
+      --ambar-mid: #fde68a;
+
+      --radio:    18px;
+      --radio-sm: 10px;
+      --trans:    0.42s cubic-bezier(.4,0,.2,1);
+      --trans-f:  0.2s ease;
+    }
+
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: 'Nunito Sans', system-ui, sans-serif;
+      background: var(--gris-100);
+      color: var(--gris-700);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 14px 28px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 65% 45% at 8% 5%,  rgba(120,187,30,.10) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 55% at 92% 95%, rgba(120,187,30,.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =============================================
+       WRAPPER
+    ============================================= */
+    #app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* =============================================
+       HEADER
+    ============================================= */
+    header {
+      background: var(--blanco);
+      border-radius: var(--radio) var(--radio) 0 0;
+      border: 1px solid var(--gris-200);
+      border-bottom: none;
+      padding: 15px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .header-logo {
+      flex-shrink: 0;
+      height: 46px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-logo img {
+      height: 100%;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .header-sep {
+      width: 1px;
+      height: 36px;
+      background: var(--gris-200);
+      flex-shrink: 0;
+    }
+
+    .header-text { flex: 1; min-width: 0; }
+
+    .header-eyebrow {
+      font-size: .64rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--verde-osc);
+      margin-bottom: 3px;
+    }
+
+    .header-text h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(.88rem, 2.2vw, 1.15rem);
+      font-weight: 700;
+      color: var(--gris-900);
+      line-height: 1.2;
+    }
+
+    .header-accent {
+      margin-top: 5px;
+      width: 26px;
+      height: 3px;
+      background: var(--verde);
+      border-radius: 99px;
+    }
+
+    .header-right {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 3px;
+    }
+
+    .section-badge {
+      font-size: .64rem;
+      font-weight: 800;
+      color: var(--verde-osc);
+      background: var(--verde-bg);
+      border: 1px solid var(--verde-mid);
+      border-radius: 99px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+
+    .slide-counter {
+      font-size: .64rem;
+      color: var(--gris-500);
+      font-weight: 700;
+    }
+
+    /* =============================================
+       PROGRESO
+    ============================================= */
+    .progress-strip {
+      background: var(--blanco);
+      border-left: 1px solid var(--gris-200);
+      border-right: 1px solid var(--gris-200);
+      padding: 8px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 4px;
+      background: var(--gris-200);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--verde-osc), var(--verde-claro));
+      transition: width var(--trans);
+    }
+
+    .progress-label {
+      font-size: .7rem;
+      font-weight: 700;
+      color: var(--gris-500);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* =============================================
+       SLIDES
+    ============================================= */
+    .slide-viewport {
+      background: var(--blanco);
+      border-left: 1px solid var(--gris-200);
+      border-right: 1px solid var(--gris-200);
+      min-height: 380px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      display: none;
+      flex-direction: column;
+      padding: 28px 26px 24px;
+      gap: 16px;
+      opacity: 0;
+      transform: translateX(30px);
+      transition: opacity var(--trans), transform var(--trans);
+    }
+
+    .slide.active  { display: flex; }
+    .slide.visible { opacity: 1; transform: translateX(0); }
+
+    .slide.out-left   { opacity: 0; transform: translateX(-36px); }
+    .slide.in-right   { opacity: 0; transform: translateX(36px); }
+    .slide.out-right  { opacity: 0; transform: translateX(36px); }
+    .slide.in-left    { opacity: 0; transform: translateX(-36px); }
+
+    /* ── INTRO slide ── */
+    .slide-intro {
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      padding: 40px 32px;
+      background: linear-gradient(155deg, var(--verde-bg) 0%, var(--blanco) 55%);
+    }
+
+    .intro-icon-wrap {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: var(--verde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(120,187,30,.35);
+      margin-bottom: 6px;
+    }
+
+    .intro-icon-wrap svg {
+      width: 34px;
+      height: 34px;
+      fill: var(--oscuro);
+    }
+
+    .intro-tag {
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--verde-osc);
+      margin-bottom: 8px;
+    }
+
+    .intro-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.2rem, 3.5vw, 1.75rem);
+      font-weight: 700;
+      color: var(--gris-900);
+      line-height: 1.2;
+      max-width: 560px;
+    }
+
+    .intro-sub {
+      font-size: clamp(.84rem, 1.8vw, .96rem);
+      color: var(--gris-500);
+      line-height: 1.65;
+      max-width: 500px;
+    }
+
+    .intro-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .chip {
+      background: var(--blanco);
+      border: 1px solid var(--gris-200);
+      border-radius: 99px;
+      padding: 5px 13px;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--gris-700);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--verde);
+      flex-shrink: 0;
+    }
+
+    /* ── Slide header ── */
+    .slide-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--gris-200);
+    }
+
+    .slide-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radio-sm);
+      background: var(--verde-bg);
+      border: 1px solid var(--verde-mid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .slide-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--verde-osc);
+    }
+
+    .slide-title-wrap { flex: 1; min-width: 0; }
+
+    .slide-etiqueta {
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      color: var(--verde-osc);
+      margin-bottom: 3px;
+    }
+
+    .slide-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1rem, 2.6vw, 1.3rem);
+      font-weight: 700;
+      color: var(--gris-900);
+      line-height: 1.2;
+    }
+
+    /* ── Lista de puntos ── */
+    .point-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .point-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .point-marker {
+      flex-shrink: 0;
+      margin-top: 3px;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      background: var(--verde);
+    }
+
+    .point-text {
+      font-size: clamp(.82rem, 1.7vw, .93rem);
+      line-height: 1.6;
+      color: var(--gris-700);
+    }
+
+    .point-text strong {
+      color: var(--gris-900);
+      font-weight: 800;
+    }
+
+    /* ── Caja alerta ámbar ── */
+    .alert-box {
+      background: var(--ambar-bg);
+      border: 1px solid var(--ambar-mid);
+      border-left: 4px solid var(--ambar);
+      border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+      padding: 11px 15px;
+      font-size: clamp(.78rem, 1.5vw, .87rem);
+      color: #78350f;
+      line-height: 1.6;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .alert-box svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      width: 16px;
+      height: 16px;
+      fill: var(--ambar);
+    }
+
+    .alert-box strong { font-weight: 800; }
+
+    /* ── Caja verde destacada ── */
+    .green-box {
+      background: var(--verde-bg);
+      border: 1px solid var(--verde-mid);
+      border-left: 4px solid var(--verde);
+      border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+      padding: 11px 15px;
+      font-size: clamp(.78rem, 1.5vw, .87rem);
+      color: var(--oscuro);
+      line-height: 1.6;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .green-box svg {
+      flex-shrink: 0;
+      margin-top: 2px;
+      width: 16px;
+      height: 16px;
+      fill: var(--verde-osc);
+    }
+
+    .green-box strong { color: var(--verde-osc); font-weight: 800; }
+
+    /* ── Grilla de tarjetas ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 10px;
+    }
+
+    .info-card {
+      background: var(--gris-100);
+      border: 1px solid var(--gris-200);
+      border-top: 3px solid var(--verde);
+      border-radius: var(--radio-sm);
+      padding: 13px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .info-card-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--verde-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-card-icon svg {
+      width: 17px;
+      height: 17px;
+      fill: var(--verde-osc);
+    }
+
+    .info-card-text {
+      font-size: clamp(.78rem, 1.55vw, .88rem);
+      line-height: 1.55;
+      color: var(--gris-700);
+    }
+
+    .info-card-text strong {
+      color: var(--gris-900);
+      font-weight: 800;
+    }
+
+    /* ── Slide OUTRO ── */
+    .slide-outro {
+      align-items: center;
+      text-align: center;
+      justify-content: center;
+      padding: 44px 32px;
+      background: linear-gradient(155deg, #1a2130 0%, #2a3d10 100%);
+    }
+
+    .outro-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--verde);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 24px rgba(120,187,30,.4);
+      margin-bottom: 10px;
+    }
+
+    .outro-icon svg {
+      width: 30px;
+      height: 30px;
+      fill: var(--oscuro);
+    }
+
+    .outro-tag {
+      font-size: .62rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--verde-claro);
+      margin-bottom: 10px;
+    }
+
+    .outro-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(1.15rem, 3.2vw, 1.65rem);
+      font-weight: 700;
+      color: var(--blanco);
+      line-height: 1.25;
+      max-width: 480px;
+    }
+
+    .outro-sub {
+      font-size: .88rem;
+      color: rgba(255,255,255,.58);
+      line-height: 1.65;
+      max-width: 400px;
+    }
+
+    /* =============================================
+       BARRA INFERIOR
+    ============================================= */
+    .bottom-bar {
+      background: var(--blanco);
+      border: 1px solid var(--gris-200);
+      border-top: 3px solid var(--verde);
+      border-radius: 0 0 var(--radio) var(--radio);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      border: none;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: .83rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background var(--trans-f), transform var(--trans-f), box-shadow var(--trans-f);
+      letter-spacing: .02em;
+    }
+
+    .btn-nav:focus-visible { outline: 3px solid var(--verde); outline-offset: 2px; }
+
+    .btn-prev {
+      background: var(--gris-100);
+      color: var(--gris-700);
+      border: 1px solid var(--gris-200);
+    }
+
+    .btn-prev:hover:not(:disabled) { background: var(--gris-200); transform: translateX(-2px); }
+
+    .btn-next {
+      background: var(--verde);
+      color: var(--oscuro);
+      box-shadow: 0 3px 12px rgba(120,187,30,.3);
+    }
+
+    .btn-next:hover:not(:disabled) {
+      background: var(--verde-osc);
+      color: var(--blanco);
+      transform: translateX(2px);
+    }
+
+    .btn-nav:disabled { opacity: .3; cursor: not-allowed; transform: none !important; }
+
+    .dots {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gris-200);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: background var(--trans-f), transform var(--trans-f), width var(--trans-f), border-radius var(--trans-f);
+    }
+
+    .dot.active {
+      background: var(--verde);
+      transform: scale(1.3);
+      width: 20px;
+      border-radius: 3px;
+    }
+
+    .dot:focus-visible { outline: 2px solid var(--verde); outline-offset: 2px; }
+
+    /* =============================================
+       ACCESIBILIDAD
+    ============================================= */
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 580px) {
+      body { padding: 12px 8px 20px; justify-content: flex-start; }
+      header { padding: 12px 14px; gap: 10px; }
+      .header-logo { height: 36px; }
+      .header-sep { height: 28px; }
+      .section-badge { display: none; }
+      .progress-strip { padding: 7px 14px; }
+      .slide { padding: 20px 16px 18px; gap: 13px; }
+      .slide-intro, .slide-outro { padding: 28px 16px; }
+      .bottom-bar { padding: 10px 14px; }
+      .btn-nav { padding: 8px 13px; font-size: .78rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .intro-chips { flex-direction: column; align-items: center; }
+    }
+
+    @media (max-width: 360px) {
+      .btn-nav { padding: 7px 10px; font-size: .74rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app" role="main">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-logo">
+      <img src="img/Logo.png" alt="TALMA APRENDE" />
+    </div>
+    <div class="header-sep" aria-hidden="true"></div>
+    <div class="header-text">
+      <p class="header-eyebrow">Módulo · Experiencia del Viajero</p>
+      <h1>Traslado de Viajeros con Movilidad Reducida</h1>
+      <div class="header-accent" aria-hidden="true"></div>
+    </div>
+    <div class="header-right">
+      <span class="section-badge" id="sectionBadge">Introducción</span>
+      <span class="slide-counter" id="slideCounter">1 / 7</span>
+    </div>
+  </header>
+
+  <!-- PROGRESO -->
+  <div class="progress-strip" role="status" aria-label="Progreso de la presentación">
+    <div class="progress-bar-bg" aria-hidden="true">
+      <div class="progress-bar-fill" id="progressFill" style="width:14.28%"></div>
+    </div>
+    <span class="progress-label" id="progressLabel">1 de 7</span>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div class="slide-viewport" role="region" aria-label="Contenido de la presentación">
+    <div aria-live="polite" aria-atomic="true" class="sr-only" id="liveRegion"></div>
+
+    <!-- ══════════════════════════════════
+         SLIDE 0 · INTRODUCCIÓN
+    ══════════════════════════════════ -->
+    <section class="slide slide-intro active" id="s0" aria-label="Introducción">
+
+      <div class="intro-icon-wrap" aria-hidden="true">
+        <!-- Ícono: persona en silla de ruedas -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm-1 5h2l1.5 3H17v2h-2.5L13 10.5V17h3v2h-3v.5A2.5 2.5 0 0 1 10.5 22H8v-2h2.5a.5.5 0 0 0 .5-.5V10H9l-1-3h3zM7 17.5a4.5 4.5 0 1 0 9 0"/>
+        </svg>
+      </div>
+
+      <p class="intro-tag">Protocolo Operativo · TALMA</p>
+      <h2 class="intro-title">Principales aspectos del traslado de viajeros con movilidad reducida</h2>
+      <p class="intro-sub">
+        Este módulo presenta los lineamientos operativos que debe aplicar el personal TALMA
+        al prestar el servicio de traslado a viajeros con movilidad reducida,
+        garantizando seguridad, dignidad y calidad en cada etapa.
+      </p>
+      <div class="intro-chips">
+        <div class="chip"><span class="chip-dot"></span>Primer contacto</div>
+        <div class="chip"><span class="chip-dot"></span>Seguridad y equipaje</div>
+        <div class="chip"><span class="chip-dot"></span>Durante el traslado</div>
+        <div class="chip"><span class="chip-dot"></span>Reportes e incidentes</div>
+        <div class="chip"><span class="chip-dot"></span>Silla propia del viajero</div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+         SLIDE 1 · PRIMER CONTACTO (diap. 11)
+    ══════════════════════════════════ -->
+    <section class="slide" id="s1" aria-label="Primer contacto con el viajero">
+
+      <div class="slide-top">
+        <div class="slide-icon" aria-hidden="true">
+          <!-- Ícono: persona / usuario -->
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
+        </div>
+        <div class="slide-title-wrap">
+          <p class="slide-etiqueta">Primer contacto</p>
+          <h2 class="slide-title">Presentación y comunicación con el viajero</h2>
+        </div>
+      </div>
+
+      <div class="point-list">
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Presentarse ante el viajero, indicarle el servicio a prestarle y <strong>dirigirse a él por su nombre</strong>, manteniendo comunicación constante con éste.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text"><strong>No asumir que siempre necesitan ayuda</strong>. Preguntar cómo los podemos ayudar en el traslado y cuál es su impedimento de movilidad y otras lesiones o aditamentos (Ejm. Sondas, escaras).</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Mirar al pasajero y agacharnos para hablarle. Utilizar un <strong>tono de voz claro y cortés</strong>.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+         SLIDE 2 · SEGURIDAD Y EQUIPAJE (diap. 21)
+    ══════════════════════════════════ -->
+    <section class="slide" id="s2" aria-label="Seguridad, equipaje y verificación de silla">
+
+      <div class="slide-top">
+        <div class="slide-icon" aria-hidden="true">
+          <!-- Ícono: escudo / seguridad -->
+          <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5L12 1zm0 4l6 2.18V11c0 3.96-2.72 7.65-6 8.93-3.28-1.28-6-4.97-6-8.93V7.18L12 5z"/></svg>
+        </div>
+        <div class="slide-title-wrap">
+          <p class="slide-etiqueta">Seguridad y verificación</p>
+          <h2 class="slide-title">Controles de seguridad, equipaje y silla de ruedas</h2>
+        </div>
+      </div>
+
+      <div class="point-list">
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">La condición de discapacidad <strong>no exime al viajero de los respectivos controles de seguridad</strong>.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">El pasajero debe llevar su equipaje de mano y <strong>manipular lo que hay en su interior</strong>. Los equipajes pesados o grandes deben ser chequeados en el módulo por el personal del área de Servicios.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text"><strong>Verificar el buen estado de la silla de ruedas</strong> antes de trasladar el viajero a ella.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text"><strong>Identificar el tipo de silla de rueda usada</strong> para definir la mejor estrategia al usarla (Ejm. fija, con partes desarmables).</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+         SLIDE 3 · DURANTE EL TRASLADO (diap. 22)
+    ══════════════════════════════════ -->
+    <section class="slide" id="s3" aria-label="Durante el traslado">
+
+      <div class="slide-top">
+        <div class="slide-icon" aria-hidden="true">
+          <!-- Ícono: ruedas / traslado -->
+          <svg viewBox="0 0 24 24"><path d="M17 8C8 10 5.9 16.17 3.82 19.82L5.4 21l1-2c.5.3 1 .6 1.6.8L7 22h2l.5-2.2c.7.1 1.4.2 2 .2h.5L11 22h2l.5-2.1c3.4-.7 5.5-3.5 5.5-6.9 0-2-.8-4-2-5zm-7 8c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zm4 0c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1zM20 3H4v2h16V3z"/></svg>
+        </div>
+        <div class="slide-title-wrap">
+          <p class="slide-etiqueta">Durante el traslado</p>
+          <h2 class="slide-title">Atención, técnica y cuidados en el traslado</h2>
+        </div>
+      </div>
+
+      <div class="point-list">
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Para la manipulación de la silla de ruedas propia del viajero (al cambiarlo a la silla de ruedas de la Aerolínea, sea normal o de pasillo), <strong>se le debe preguntar cómo podemos ayudarlo a doblarla o retirarle las ruedas</strong>.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text"><strong>Nunca se deben dejar viajeros en sillas de ruedas desatendidos</strong> por largos períodos de tiempo.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Atender las <strong>sugerencias y recomendaciones que el viajero informe</strong> para mantener su estado de salud.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Al subir o bajar escalas para el ingreso o salida del avión, al acomodar al viajero en su silla de ruedas (normal o de pasillo) o en la silla del avión, <strong>se debe definir previamente la técnica más adecuada</strong> según la condición del viajero y los recursos disponibles.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+         SLIDE 4 · REPORTES E INCIDENTES (diap. 23)
+    ══════════════════════════════════ -->
+    <section class="slide" id="s4" aria-label="Reportes e incidentes">
+
+      <div class="slide-top">
+        <div class="slide-icon" aria-hidden="true">
+          <!-- Ícono: portapapeles / reporte -->
+          <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        </div>
+        <div class="slide-title-wrap">
+          <p class="slide-etiqueta">Reportes y cierre del servicio</p>
+          <h2 class="slide-title">Incidentes, daños y cierre del servicio</h2>
+        </div>
+      </div>
+
+      <div class="point-list">
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Las sillas de ruedas de pasillo <strong>generalmente sólo se utilizan al interior del avión</strong>.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Si ocurre un incidente o accidente con un viajero, <strong>reportarlo inmediatamente a la Aerolínea respectiva (CRO)</strong> y en caso de presentarse lesionados notificar inmediatamente a <strong>Sanidad Aeroportuaria</strong>.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Si se identifican o presentan <strong>daños a las sillas de ruedas, reportarlo inmediatamente al Jefe de Aeropuerto</strong> de la Aerolínea Respectiva, para que ellos procedan con su reparación.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Una vez finalizado el servicio, <strong>se debe llevar la silla a su respectivo lugar de almacenamiento</strong>, nunca se deben dejar abandonadas.</p>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        <p><strong>Importante:</strong> Todo incidente debe reportarse de forma inmediata. La omisión tiene consecuencias para el viajero, la Aerolínea y el equipo operativo.</p>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+         SLIDE 5 · SILLA PROPIA (diap. 24)
+    ══════════════════════════════════ -->
+    <section class="slide" id="s5" aria-label="Manipulación de silla de ruedas propia del viajero">
+
+      <div class="slide-top">
+        <div class="slide-icon" aria-hidden="true">
+          <!-- Ícono: llave / herramienta -->
+          <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+        </div>
+        <div class="slide-title-wrap">
+          <p class="slide-etiqueta">Silla propia del viajero</p>
+          <h2 class="slide-title">Manipulación de silla de ruedas propia del viajero</h2>
+        </div>
+      </div>
+
+      <div class="point-list">
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text"><strong>El pasajero debe indicar cómo se dobla la silla</strong> para ser embarcada.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text">Preguntarle <strong>cómo lo podemos ayudar para doblarla o retirarle las ruedas</strong> y qué otros cuidados hay que tener presentes con la silla.</p>
+        </div>
+        <div class="point-item">
+          <span class="point-marker" aria-hidden="true"></span>
+          <p class="point-text"><strong>Informar al representante de la Aerolínea</strong> en caso de que la silla se encuentre en malas condiciones.</p>
+        </div>
+      </div>
+
+      <div class="green-box">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+        <p><strong>Clave operativa:</strong> El pasajero es quien mejor conoce su silla. Escucha sus instrucciones y síguelas al pie de la letra antes de manipularla.</p>
+      </div>
+
+    </section>
+
+    <!-- ══════════════════════════════════
+         SLIDE 6 · CIERRE
+    ══════════════════════════════════ -->
+    <section class="slide slide-outro" id="s6" aria-label="Cierre del módulo">
+
+      <div class="outro-icon" aria-hidden="true">
+        <!-- Ícono: check / completado -->
+        <svg viewBox="0 0 24 24"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+      </div>
+      <p class="outro-tag">Módulo completado</p>
+      <h2 class="outro-title">Un servicio seguro y digno es nuestra responsabilidad</h2>
+      <p class="outro-sub">
+        Cada traslado es una oportunidad para demostrar el estándar TALMA.
+        Aplica siempre el protocolo, comunica, y actúa con empatía.
+      </p>
+
+    </section>
+
+  </div><!-- /slide-viewport -->
+
+  <!-- NAVEGACIÓN -->
+  <nav class="bottom-bar" aria-label="Navegación entre diapositivas">
+    <button class="btn-nav btn-prev" id="btnPrev"
+            onclick="changeSlide(-1)" disabled
+            aria-label="Diapositiva anterior">
+      &#8592; Anterior
+    </button>
+
+    <div class="dots" id="dotsWrap" role="tablist" aria-label="Ir a diapositiva"></div>
+
+    <button class="btn-nav btn-next" id="btnNext"
+            onclick="changeSlide(1)"
+            aria-label="Diapositiva siguiente">
+      Siguiente &#8594;
+    </button>
+  </nav>
+
+</div>
+
+<script>
+  var slides  = document.querySelectorAll('.slide');
+  var total   = slides.length;
+  var current = 0;
+  var isAnim  = false;
+
+  var names = [
+    'Introducción',
+    'Primer contacto',
+    'Seguridad y verificación',
+    'Durante el traslado',
+    'Reportes e incidentes',
+    'Silla del viajero',
+    'Cierre del módulo'
+  ];
+
+  var liveR    = document.getElementById('liveRegion');
+  var progF    = document.getElementById('progressFill');
+  var progL    = document.getElementById('progressLabel');
+  var badge    = document.getElementById('sectionBadge');
+  var counter  = document.getElementById('slideCounter');
+  var btnPrev  = document.getElementById('btnPrev');
+  var btnNext  = document.getElementById('btnNext');
+  var dotsWrap = document.getElementById('dotsWrap');
+
+  /* Crear dots */
+  for (var i = 0; i < total; i++) {
+    (function(idx) {
+      var d = document.createElement('button');
+      d.className = 'dot' + (idx === 0 ? ' active' : '');
+      d.setAttribute('role', 'tab');
+      d.setAttribute('aria-label', 'Diapositiva ' + (idx + 1));
+      d.setAttribute('aria-current', idx === 0 ? 'true' : 'false');
+      d.onclick = function() { if (idx !== current && !isAnim) goTo(idx); };
+      dotsWrap.appendChild(d);
+    })(i);
+  }
+
+  function allDots() { return dotsWrap.querySelectorAll('.dot'); }
+
+  function updateUI() {
+    var pct = Math.round(((current + 1) / total) * 100);
+    progF.style.width  = pct + '%';
+    progL.textContent  = (current + 1) + ' de ' + total;
+    badge.textContent  = names[current] || '';
+    counter.textContent = (current + 1) + ' / ' + total;
+    btnPrev.disabled   = current === 0;
+    btnNext.textContent = current === total - 1 ? '&#10003; Finalizar' : 'Siguiente &#8594;';
+    btnNext.innerHTML   = current === total - 1 ? '&#10003; Finalizar' : 'Siguiente &#8594;';
+
+    allDots().forEach(function(d, i) {
+      d.classList.toggle('active', i === current);
+      d.setAttribute('aria-current', i === current ? 'true' : 'false');
+    });
+  }
+
+  function changeSlide(dir) {
+    var next = current + dir;
+    if (next < 0 || next >= total || isAnim) return;
+    goTo(next, dir);
+  }
+
+  function goTo(index, dir) {
+    if (index === current || isAnim) return;
+    isAnim = true;
+    if (dir === undefined) dir = index > current ? 1 : -1;
+
+    var outC = dir > 0 ? 'out-left'  : 'out-right';
+    var inC  = dir > 0 ? 'in-right'  : 'in-left';
+
+    var oldS = slides[current];
+    var newS = slides[index];
+
+    oldS.classList.remove('visible');
+    oldS.classList.add(outC);
+
+    setTimeout(function() {
+      oldS.classList.remove('active', outC);
+      newS.classList.add('active', inC);
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          newS.classList.remove(inC);
+          newS.classList.add('visible');
+        });
+      });
+
+      current = index;
+      updateUI();
+
+      liveR.textContent = '';
+      setTimeout(function() {
+        liveR.textContent = 'Diapositiva ' + (current + 1) + ' de ' + total + ': ' + names[current];
+      }, 60);
+
+      setTimeout(function() { isAnim = false; }, 460);
+    }, 330);
+  }
+
+  /* Swipe táctil */
+  var txStart = 0;
+  var vp = document.querySelector('.slide-viewport');
+  vp.addEventListener('touchstart', function(e) { txStart = e.changedTouches[0].clientX; }, { passive: true });
+  vp.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - txStart;
+    if (Math.abs(dx) > 50) changeSlide(dx < 0 ? 1 : -1);
+  }, { passive: true });
+
+  /* Teclado */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+
+  /* Init */
+  slides[0].classList.add('visible');
+  updateUI();
+</script>
+
+</body>
+</html>
